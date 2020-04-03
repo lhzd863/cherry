@@ -119,34 +119,34 @@ func (p *Preprocessor) ExpandData(roomName, data string) string {
 }
 
 func expandImageRefs(data string) string {
-	var retData string
-	dataLen := len(data)
-	reg := "(?i).+?\\.(jpg|gif|bmp|jpeg|png)"
-	if ok, _ := regexp.Match(reg, []byte(data)); ok {
-	for d := 0; d < dataLen; {
-		if data[d] == '[' {
-			var uri string
-			d++
-			for d < dataLen && data[d] != ']' {
-				uri += string(data[d])
-				d++
-			}
-			if strings.HasSuffix(uri, ".gif") ||
-				strings.HasSuffix(uri, ".jpg") ||
-				strings.HasSuffix(uri, ".jpeg") ||
-				strings.HasSuffix(uri, ".png") ||
-				strings.HasSuffix(uri, ".bmp") {
-				retData += "<img src = \"" + uri + "\">"
-			}
-		} else {
-			retData += string(data[d])
-		}
-		d++
-	}
-	}else {
-	    retData = data
-	}
-	return retData
+        var retData string
+        dataLen := len(data)
+        reg := "(?i).+?\\.(jpg|gif|bmp|jpeg|png)"
+        if ok, _ := regexp.Match(reg, []byte(data)); ok {
+                for d := 0; d < dataLen; {
+                        if data[d] == '[' {
+                                var uri string
+                                d++
+                                for d < dataLen && data[d] != ']' {
+                                        uri += string(data[d])
+                                        d++
+                                }
+                                if strings.HasSuffix(uri, ".gif") ||
+                                        strings.HasSuffix(uri, ".jpg") ||
+                                        strings.HasSuffix(uri, ".jpeg") ||
+                                        strings.HasSuffix(uri, ".png") ||
+                                        strings.HasSuffix(uri, ".bmp") {
+                                        retData += "<img src = \"" + uri + "\">"
+                                }
+                        } else {
+                                retData += string(data[d])
+                        }
+                        d++
+                }
+        } else {
+                retData = data
+        }
+        return retData
 }
 
 // GetBadAssErrorData spits the default 404 Cherry's document.
