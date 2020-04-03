@@ -1,0 +1,18 @@
+# This config file shows how to open a room using cherry.
+
+cherry.root (
+    # Actually it will be accessible locally only.
+    servername = "47.89.240.84"
+
+    # If you want to https connections instead of http uncomment the two
+    # sets below and run "cert/mkcert.sh".
+
+#    certificate = "cert/newcert.crt"
+#    private-key = "cert/newcert.key"
+)
+
+cherry.rooms (
+    aliens-on-earth:12320
+)
+
+cherry.branch conf/aliens_on_earth.cherry

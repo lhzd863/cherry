@@ -1,0 +1,94 @@
+#
+#                                Copyright (C) 2015 by Rafael Santiago
+#
+# This is a free software. You can redistribute it and/or modify under
+# the terms of the GNU General Public License version 2.
+#
+#
+include ~/toolsets/go/go.hsl
+
+var src type list;
+var dep type string;
+
+project cherry : toolset "go": dependencies $dep: $src;
+
+function bincp() : result type int {
+    var oldcwd type string;
+    $oldcwd = hefesto.sys.pwd();
+    hefesto.sys.cd("..");
+    if (hefesto.sys.cd("bin") == 0) {
+        hefesto.sys.mkdir("bin");
+        if (hefesto.sys.cd("bin") == 0) {
+            hefesto.sys.echo("ERROR: could not move to bin subdirectory.");
+            hefesto.sys.cd($oldcwd);
+            result 0;
+        }
+    }
+    var cp_res type int;
+    var appname type string;
+    var src_path type string;
+    $appname = "cherry";
+    if (hefesto.sys.os_name() == "windows") {
+        $appname = $appname + ".exe";
+    }
+    $src_path = hefesto.sys.make_path("../src", $appname);
+    $cp_res = hefesto.sys.cp($src_path, $appname);
+    hefesto.sys.rm($src_path);
+    hefesto.sys.cd($oldcwd);
+    result ($cp_res == 1);
+}
+
+function str_contains(haystack type string, needle type string) : result type int {
+    var n type int;
+    var REedle type string;
+    $n = 0;
+    while ($n < $needle.len()) {
+        if ($needle.at($n) == "\\" || $needle.at($n) == ".") {
+            $REedle = $REedle + "\\";
+        }
+        $REedle = $REedle + $needle.at($n);
+        $n = $n + 1;
+    }
+    result ($haystack.match($REedle) > 0);
+}
+
+function setup_gopath() : result type none {
+    var gopath type string;
+    $gopath = hefesto.sys.env("GOPATH");
+    var cherry_gopath_entry type string;
+    var old_cwd type string;
+    $old_cwd = hefesto.sys.pwd();
+    hefesto.sys.cd("..");
+    $cherry_gopath_entry = hefesto.sys.pwd();
+    hefesto.sys.cd($old_cwd);
+    if (str_contains($gopath, $cherry_gopath_entry)) {
+        hefesto.sys.echo("INFO: Nice! GOPATH is configured :)\n");
+    } else {
+        hefesto.sys.echo("WARN: GOPATH is not configured so I will do it for you on this build task. " +
+                         "However, note that currently you are not able to run \"go build\" or \"go run\" commands " +
+                         "by yourself for this project. In order to do this, please add \"" + $cherry_gopath_entry + "\" to your GOPATH.\n");
+        if (hefesto.sys.os_name() != "windows") {
+            $gopath = $gopath + ":";
+        } else {
+            $gopath = $gopath + ";";
+        }
+        $gopath = $gopath + $cherry_gopath_entry;
+        hefesto.sys.setenv("GOPATH", $cherry_gopath_entry);
+    }
+}
+
+cherry.prologue() {
+    setup_gopath();
+    $src.ls(".*\\.go$");
+}
+
+cherry.epilogue() {
+    if (hefesto.sys.last_forge_result() == 0) {
+        if (bincp() == 0) {
+            hefesto.sys.echo("ERROR: could not transfer cherry binary to ../bin subdirectory.\n");
+            hefesto.sys.exit(1);
+        } else {
+            hefesto.sys.echo("INFO: cherry binary is under ../bin subdirectory.\n");
+        }
+    }
+}
