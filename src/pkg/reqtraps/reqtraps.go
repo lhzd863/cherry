@@ -12,9 +12,9 @@ package reqtraps
 import (
 	"net"
 	"os"
-	"github.com/rafael-santiago/cherry/src/pkg/config"
-	"github.com/rafael-santiago/cherry/src/pkg/html"
-	"github.com/rafael-santiago/cherry/src/pkg/rawhttp"
+	"github.com/lhzd863/cherry/src/pkg/config"
+	"github.com/lhzd863/cherry/src/pkg/html"
+	"github.com/lhzd863/cherry/src/pkg/rawhttp"
 	"strings"
 )
 
