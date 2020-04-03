@@ -13,7 +13,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"github.com/rafael-santiago/cherry/src/pkg/config"
+	"github.com/lhzd863/cherry/src/pkg/config"
 	"strconv"
 	"strings"
 )
