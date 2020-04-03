@@ -14,6 +14,7 @@ import (
 	"github.com/lhzd863/cherry/src/pkg/config"
 	"strings"
 	"time"
+	"regexp"
 )
 
 // Preprocessor is returned by NewHTMLPreprocessor and it actually performs
@@ -120,6 +121,8 @@ func (p *Preprocessor) ExpandData(roomName, data string) string {
 func expandImageRefs(data string) string {
 	var retData string
 	dataLen := len(data)
+	reg := "(?i).+?\\.(jpg|gif|bmp|jpeg|png)"
+	if ok, _ := regexp.Match(reg, []byte(data)); ok {
 	for d := 0; d < dataLen; {
 		if data[d] == '[' {
 			var uri string
@@ -139,6 +142,9 @@ func expandImageRefs(data string) string {
 			retData += string(data[d])
 		}
 		d++
+	}
+	}else {
+	    retData = data
 	}
 	return retData
 }
